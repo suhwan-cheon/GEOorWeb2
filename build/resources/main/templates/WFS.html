@@ -21,13 +21,15 @@
         }
 
         .analytics {
-            width: 90%;
             background-color: lightskyblue;
+            position: fixed;
+            bottom: 10px;
+            left: 0;
+            width: 35%;
             color: white;
             border-radius: 10px;
             padding: 10px 0px 10px 0px;
             border: none;
-            margin-top: 300px;
             margin-left: 10px;
         }
 
@@ -67,25 +69,28 @@
         </div>
 
         <span>
-            <button>날씨</button>
-            <button>교량</button>
-            <button>결빙</button>
+            <button onclick="showMarker()">날씨</button>
+            <button onclick="hideMarker()">교량</button>
+            <button onclick="lookAtMe(126.865137, 37.599406)">결빙</button>
         </span>
 
         <div style="width: 100%">
-            <button class="analytics" type="button" onclick="javascript:test();">분석 시작</button>
+            <button class="analytics" type="button" onclick="showWMS()">분석 시작</button>
         </div>
 
     </div>
-    <div id="map" ></div>
+    <div id="map"></div>
 </div>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
 <script type="text/javascript">
 
-    var vectorSource = new ol.source.Vector({
+
+
+    let vectorSource = new ol.source.Vector({
         format: new ol.format.GeoJSON(),
         url: function (extent) {
             console.log(extent.join(','));
-            var strUrl = 'http://localhost:8088/geoserver/GeoOr/wfs?' +
+            let strUrl = 'http://localhost:8088/geoserver/GeoOr/wfs?' +
                 'service=WFS&' +
                 'version=1.1.0&' +
                 'request=GetFeature&' +
@@ -98,7 +103,7 @@
         strategy: ol.loadingstrategy.bbox
     });
 
-    var vector = new ol.layer.Vector({
+    let vector = new ol.layer.Vector({
         className: "wfsLayer",
         source: vectorSource,
         style: new ol.style.Style({
@@ -110,7 +115,7 @@
     })
 
     // vworld 배경지도 띄우기
-    var map = new ol.Map({
+    let map = new ol.Map({
         target: 'map',
         layers: [
             new ol.layer.Tile({
@@ -131,22 +136,58 @@
     // stroke = 경계선, fill = 채우기
 
     // 미리 3개의 색깔 스타일 지정 (빨, 노, 초)
-    var styleRed = new ol.style.Style({
+    let styleRed = new ol.style.Style({
         stroke: new ol.style.Stroke({color: '#d80303'}),
         fill: new ol.style.Fill({color: '#d80303'})
     });
 
-    var styleYellow = new ol.style.Style({
+    let styleYellow = new ol.style.Style({
         stroke: new ol.style.Stroke({color: '#f4e571'}),
         fill: new ol.style.Fill({color: '#f4e571'})
     });
 
-    var styleGreen = new ol.style.Style({
+    let styleGreen = new ol.style.Style({
         stroke: new ol.style.Stroke({color: '#32ec54'}),
         fill: new ol.style.Fill({color: '#32ec54'})
     });
 
-    function test(){
+    function showMarker() {
+        hideMarker(); //기존에 있던 마커 제거
+
+        let z = document.createElement('img'); // is a node
+        z.src = "img/marker.png";
+        z.style = "width: 20px;" +
+            "  height: auto;" +
+            "  background: url(\"img/marker.png\") no-repeat;" +
+            "  background-size: contain;" +
+            "  padding: 0;"
+
+        //api 호출 부분
+
+        //가져온 좌표 반복문 돌려서 모두 overlay처리
+
+        map.addOverlay(new ol.Overlay({
+            position: ol.proj.transform(
+                [127.6176, 36.8724],
+                'EPSG:4326',
+                'EPSG:3857'
+            ),
+            element: z
+        }));
+    }
+
+    //마커 삭제부분 : img 태그 모두 제거해서 없애기
+    function hideMarker() {
+        $('img').remove();
+    }
+
+    function lookAtMe(lat, long) {
+
+        map.getView().setCenter(ol.proj.transform([lat, long], 'EPSG:4326', 'EPSG:3857'));
+        map.getView().setZoom(16);
+    }
+
+    function showWMS(){
         var features = vectorSource.getFeatures();
 
         // for문 돌면서 각 값의 범위에 따라 색깔 다르게 지정
