@@ -70,7 +70,7 @@
 
         <span>
             <button onclick="showMarker()">날씨</button>
-            <button onclick="hideMarker()">교량</button>
+            <button onclick="getTurnel()">교량</button>
             <button onclick="lookAtMe(126.865137, 37.599406)">결빙</button>
         </span>
 
@@ -208,6 +208,23 @@
         var y = Math.log(Math.tan(((90 + lat) * Math.PI) / 360)) / (Math.PI / 180);
         y = (y * 20037508.34) / 180;
         return [x, y];
+    }
+
+    function getTurnel() {
+        let xhr = new XMLHttpRequest();
+        let url = 'http://apis.data.go.kr/1613000/btiData/getBrdgList'; /*URL*/
+        let queryParams = '?' + encodeURIComponent('serviceKey') + '='+'mWqQaDoKuEgZ6uOuwh6YVaxSjmlymrAML5TELthV%2FpJi9FHf4fYDL5O4VnQWTf1ks3eWxySwiNQF%2FnC0Nh1kWg%3D%3D'; /*Service Key*/
+        queryParams += '&' + encodeURIComponent('responseType') + '=' + encodeURIComponent('xml'); /**/
+        queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent('1000'); /**/
+        queryParams += '&' + encodeURIComponent('hyear') + '=' + encodeURIComponent('2020'); /**/
+        xhr.open('GET', url + queryParams);
+        xhr.onreadystatechange = function () {
+            if (this.readyState === 4) {
+                console.log('Status: '+this.status+'nHeaders: '+JSON.stringify(this.getAllResponseHeaders())+'nBody: '+this.responseText);
+            }
+        };
+
+        xhr.send('');
     }
 
 
