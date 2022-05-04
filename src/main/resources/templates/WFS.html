@@ -1,86 +1,76 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
+
+    <link rel="stylesheet" href="wfs.css">
+    <script type="text/javascript" src="map.js"></script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/css/ol.css">
-    <style>
 
-        #input_info {
-            position: absolute;
-            width: 37%;
-            margin: 10px;
-        }
-
-        #map {
-            position: absolute;
-            padding: 10px;
-            top: 0;
-            right: 0;
-            width: 60%;
-            height: 95%;
-        }
-
-        .analytics {
-            background-color: lightskyblue;
-            position: fixed;
-            bottom: 10px;
-            left: 0;
-            width: 35%;
-            color: white;
-            border-radius: 10px;
-            padding: 10px 0px 10px 0px;
-            border: none;
-            margin-left: 10px;
-        }
-
-        .input-form {
-            display: block;
-        }
-
-        .input-form div {
-            padding: 10px;
-        }
-
-        * {
-            font-size: 15px;
-            font-family: Consolas, sans-serif;
-        }
-    </style>
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.4.3/build/ol.js"></script>
+
     <title>GEOorWeb</title>
 </head>
 <body>
-<div id="dsp">
-    <div id="input_info">
-        <div class="input-form">
-            <span class="subject">Hillshade</span>
-            <div>
-                <label for="address">주소:</label>
-                <input id="address" type="text" name="address" placeholder="주소 개발하삼">
-            </div>
-            <div>
-                <label for="date">날씨:</label>
-                <input id="date" type="date" value="2022-04-27" min="2022-04-27" max="2022-05-27">
-            </div>
-            <div>
-                <label for="time">시간:</label>
-                <input id="time" type="time">
-            </div>
-        </div>
 
-        <span>
-            <button onclick="showMarker()">날씨</button>
-            <button onclick="hideMarker()">교량</button>
-            <button onclick="lookAtMe(126.865137, 37.599406)">결빙</button>
-        </span>
+<div id="map"></div>
+<script type="text/javascript">
 
-        <div style="width: 100%">
-            <button class="analytics" type="button" onclick="showWMS()">분석 시작</button>
-        </div>
+<!--  html 범위   -->
 
-    </div>
-    <div id="map"></div>
+<div id="title">
+
+    <h2>HillShade</h2>
+
 </div>
+
+<div id="data">
+
+    주소 <input id="adress" class="inputData" type="text" placeholder="주소 입력"> <br>
+    날짜 <input id="date" class="inputData" type="date" value="2022-05-01" min="2022-04-27" max="2022-05-30"> <br>
+    시간 <input id="time" class="inputData" type="time" value="00:00:00"> <br>
+    옵션 <br>
+
+</div>
+
+<div id="option">
+
+    <input id="weatherCheck" type="checkbox">
+    <label for="weatherCheck"> 날씨 🌈️ </label>
+
+    <input id="bridgeCheck" type="checkbox">
+    <label for="bridgeCheck"> 교량 🚙 </label>
+
+    <input id="frostCheck" type="checkbox">
+    <label for="frostCheck"> 결빙 ️❄️ </label>
+
+</div>
+
+<div id="startButton">
+    <button id="analysisButton" onclick="analysisStart()"> 분석시작 </button>
+</div>
+
+
+<script>
+
+    function analysisStart(){
+
+        window.alert(addressInput);
+
+        let addressInput = document.getElementById('address').value;
+        let dateInput = document.getElementById('date').value;
+        let timeInput = document.getElementById('time').value;
+
+        let weatherOption = document.getElementById('weatherCheck').value;
+        let bridgeOption = document.getElementById('bridgeCheck').value;
+        let frostOption = document.getElementById('frostCheck').value;
+
+    }
+
+
+</script>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script type="text/javascript">
 
@@ -151,6 +141,8 @@
         fill: new ol.style.Fill({color: '#32ec54'})
     });
 
+    function test(){
+        let features = vectorSource.getFeatures();
     function showMarker() {
         hideMarker(); //기존에 있던 마커 제거
 
@@ -191,7 +183,7 @@
         var features = vectorSource.getFeatures();
 
         // for문 돌면서 각 값의 범위에 따라 색깔 다르게 지정
-        var i;
+        let i;
         for(i=0; i<features.length; i++){
             if(features[i]['values_'].hillshade <= 50) features[i].setStyle(styleRed);
             else if(features[i]['values_'].hillshade <= 70) features[i].setStyle(styleYellow);
