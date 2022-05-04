@@ -16,9 +16,6 @@
 <body>
 
 <div id="map"></div>
-<script type="text/javascript">
-
-<!--  html 범위   -->
 
 <div id="title">
 
@@ -52,8 +49,8 @@
     <button id="analysisButton" onclick="analysisStart()"> 분석시작 </button>
 </div>
 
-
-<script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
 
     function analysisStart(){
 
@@ -68,11 +65,6 @@
         let frostOption = document.getElementById('frostCheck').value;
 
     }
-
-
-</script>
-<script src="http://code.jquery.com/jquery-latest.js"></script>
-<script type="text/javascript">
 
 
 
@@ -141,66 +133,70 @@
         fill: new ol.style.Fill({color: '#32ec54'})
     });
 
-    function test(){
+    function test() {
         let features = vectorSource.getFeatures();
-    function showMarker() {
-        hideMarker(); //기존에 있던 마커 제거
-
-        let z = document.createElement('img'); // is a node
-        z.src = "img/marker.png";
-        z.style = "width: 20px;" +
-            "  height: auto;" +
-            "  background: url(\"img/marker.png\") no-repeat;" +
-            "  background-size: contain;" +
-            "  padding: 0;"
-
-        //api 호출 부분
-
-        //가져온 좌표 반복문 돌려서 모두 overlay처리
-
-        map.addOverlay(new ol.Overlay({
-            position: ol.proj.transform(
-                [127.6176, 36.8724],
-                'EPSG:4326',
-                'EPSG:3857'
-            ),
-            element: z
-        }));
     }
 
-    //마커 삭제부분 : img 태그 모두 제거해서 없애기
-    function hideMarker() {
-        $('img').remove();
-    }
+        function showMarker() {
+            hideMarker(); //기존에 있던 마커 제거
 
-    function lookAtMe(lat, long) {
+            let z = document.createElement('img'); // is a node
+            z.src = "img/marker.png";
+            z.style = "width: 20px;" +
+                "  height: auto;" +
+                "  background: url(\"img/marker.png\") no-repeat;" +
+                "  background-size: contain;" +
+                "  padding: 0;"
 
-        map.getView().setCenter(ol.proj.transform([lat, long], 'EPSG:4326', 'EPSG:3857'));
-        map.getView().setZoom(16);
-    }
+            //api 호출 부분
 
-    function showWMS(){
-        var features = vectorSource.getFeatures();
+            //가져온 좌표 반복문 돌려서 모두 overlay처리
 
-        // for문 돌면서 각 값의 범위에 따라 색깔 다르게 지정
-        let i;
-        for(i=0; i<features.length; i++){
-            if(features[i]['values_'].hillshade <= 50) features[i].setStyle(styleRed);
-            else if(features[i]['values_'].hillshade <= 70) features[i].setStyle(styleYellow);
-            else features[i].setStyle(styleGreen);
+            map.addOverlay(new ol.Overlay({
+                position: ol.proj.transform(
+                    [127.6176, 36.8724],
+                    'EPSG:4326',
+                    'EPSG:3857'
+                ),
+                element: z
+            }));
         }
 
-        map.removeLayer(vector);
-        map.addLayer(vector);
+        //마커 삭제부분 : img 태그 모두 제거해서 없애기
+        function hideMarker() {
+            $('img').remove();
+        }
 
-    }
-    //EPSG:4326 -> EPSG:3857
-    function convertCoordinates(lon, lat) {
-        var x = (lon * 20037508.34) / 180;
-        var y = Math.log(Math.tan(((90 + lat) * Math.PI) / 360)) / (Math.PI / 180);
-        y = (y * 20037508.34) / 180;
-        return [x, y];
-    }
+        function lookAtMe(lat, long) {
+
+            map.getView().setCenter(ol.proj.transform([lat, long], 'EPSG:4326', 'EPSG:3857'));
+            map.getView().setZoom(16);
+        }
+
+        function showWMS() {
+            var features = vectorSource.getFeatures();
+
+            // for문 돌면서 각 값의 범위에 따라 색깔 다르게 지정
+            let i;
+            for (i = 0; i < features.length; i++) {
+                if (features[i]['values_'].hillshade <= 50) features[i].setStyle(styleRed);
+                else if (features[i]['values_'].hillshade <= 70) features[i].setStyle(styleYellow);
+                else features[i].setStyle(styleGreen);
+            }
+
+            map.removeLayer(vector);
+            map.addLayer(vector);
+
+        }
+
+        //EPSG:4326 -> EPSG:3857
+        function convertCoordinates(lon, lat) {
+            var x = (lon * 20037508.34) / 180;
+            var y = Math.log(Math.tan(((90 + lat) * Math.PI) / 360)) / (Math.PI / 180);
+            y = (y * 20037508.34) / 180;
+            return [x, y];
+        }
+
 
 
 </script>
