@@ -72,11 +72,11 @@ public class ShpService {
         }
     }
 
-    public void applyHazard(ArrayList<Hazard> lake, ArrayList<Hazard> turnel) throws SQLException {
-        HazardRepository hazardRepository = new HazardRepository();
-        try (Connection conn = jdbcTemplate.getConnection()) {
-            hazardRepository.applyHazard(conn, lake, turnel);
-            conn.commit();
-        }
-    }
+//    public void applyHazard(ArrayList<Hazard> lake, ArrayList<Hazard> turnel) throws SQLException {
+//        HazardRepository hazardRepository = new HazardRepository();
+//        try (Connection conn = jdbcTemplate.getConnection()) {
+//            //hazardRepository.applyHazard(conn, lake, turnel);
+//            conn.commit();
+//        }
+//    }
 }

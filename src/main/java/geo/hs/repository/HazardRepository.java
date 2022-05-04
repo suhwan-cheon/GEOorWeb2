@@ -1,21 +1,172 @@
 package geo.hs.repository;
 
-import geo.hs.algorithm.coordinate.ConvertSRID;
 import geo.hs.model.hazard.Hazard;
-import org.geotools.geometry.jts.JTSFactoryFinder;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.opengis.referencing.operation.TransformException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
-import static geo.hs.config.ApplicationProperties.getProperty;
-
 public class HazardRepository {
+
+    public void saveBridge(ArrayList<Hazard> hazards) throws SQLException {
+        String url = "jdbc:postgresql://localhost:5432/geor";
+        String user = "postgres";
+        String password = ""; //password 입력
+        try
+        {
+            Connection connect = null;
+            connect = DriverManager.getConnection(url, user, password);
+
+            if(connect != null) {
+                System.out.println("Connection successful!!");
+            }
+            else {
+                throw new SQLException("no connection...");
+            }
+
+            connect.setAutoCommit(false);
+
+            // sql문
+            String sql = "INSERT INTO bridge VALUES(?, ?)";
+            PreparedStatement ps = connect.prepareStatement(sql);
+
+            for(Hazard hazard : hazards){
+                ps.setDouble(1, hazard.getLatitude());
+                ps.setDouble(2, hazard.getLongitude());
+                ps.addBatch();
+                ps.clearParameters();
+            }
+
+            ps.executeBatch();
+            ps.clearParameters(); //Batch 초기화
+            connect.commit();
+
+        } catch (SQLException ex) {
+            throw ex;
+        }
+    }
+
+    public ArrayList<Hazard> getBridge() throws SQLException {
+        ArrayList<Hazard> hazards = new ArrayList<>();
+
+        String url = "jdbc:postgresql://localhost:5432/geor";
+        String user = "postgres";
+        String password = ""; //password 입력
+        try
+        {
+            Connection connect = null;
+            connect = DriverManager.getConnection(url, user, password);
+
+            if(connect != null) {
+                System.out.println("Connection successful!!");
+            }
+            else {
+                throw new SQLException("no connection...");
+            }
+
+
+            Statement stmt = connect.createStatement();
+            // sql문
+            String sql = "SELECT latitude, longitude FROM bridge";
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while(rs.next()){
+                Double latitude = rs.getDouble("latitude");
+                Double longitude = rs.getDouble("longitude");
+
+                if(latitude == 0.0 || longitude == 0.0) continue;
+
+                Hazard hazard = new Hazard(latitude, longitude);
+                hazards.add(hazard);
+            }
+
+
+        } catch (SQLException ex) {
+            throw ex;
+        }
+        return hazards;
+    }
+
+    public void saveTunnel(ArrayList<Hazard> hazards) throws SQLException {
+        String url = "jdbc:postgresql://localhost:5432/geor";
+        String user = "postgres";
+        String password = ""; //password 입력
+        try
+        {
+            Connection connect = null;
+            connect = DriverManager.getConnection(url, user, password);
+
+            if(connect != null) {
+                System.out.println("Connection successful!!");
+            }
+            else {
+                throw new SQLException("no connection...");
+            }
+
+            connect.setAutoCommit(false);
+
+            // sql문
+            String sql = "INSERT INTO tunnel VALUES(?, ?)";
+            PreparedStatement ps = connect.prepareStatement(sql);
+
+            for(Hazard hazard : hazards){
+                ps.setDouble(1, hazard.getLatitude());
+                ps.setDouble(2, hazard.getLongitude());
+                ps.addBatch();
+                ps.clearParameters();
+            }
+
+            ps.executeBatch();
+            ps.clearParameters(); //Batch 초기화
+            connect.commit();
+
+        } catch (SQLException ex) {
+            throw ex;
+        }
+    }
+
+    public ArrayList<Hazard> getTunnel() throws SQLException {
+        ArrayList<Hazard> hazards = new ArrayList<>();
+
+        String url = "jdbc:postgresql://localhost:5432/geor";
+        String user = "postgres";
+        String password = ""; //password 입력
+        try
+        {
+            Connection connect = null;
+            connect = DriverManager.getConnection(url, user, password);
+
+            if(connect != null) {
+                System.out.println("Connection successful!!");
+            }
+            else {
+                throw new SQLException("no connection...");
+            }
+
+
+            Statement stmt = connect.createStatement();
+            // sql문
+            String sql = "SELECT latitude, longitude FROM tunnel";
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while(rs.next()){
+                Double latitude = rs.getDouble("latitude");
+                Double longitude = rs.getDouble("longitude");
+
+                if(latitude == 0.0 || longitude == 0.0) continue;
+
+                Hazard hazard = new Hazard(latitude, longitude);
+                hazards.add(hazard);
+            }
+
+
+        } catch (SQLException ex) {
+            throw ex;
+        }
+        return hazards;
+    }
+
+    /*
+    이전 코드 -> 해저드를 hillshade로 처리했던 작년 코드
     private final ConvertSRID convertSRID;
     private final GeometryFactory geometryFactory;
 
@@ -59,4 +210,6 @@ public class HazardRepository {
         query.append(" where ST_Within(ST_GeometryFromText(?, 5179), SHP.the_geom)");
         return query.toString();
     }
+
+     */
 }
